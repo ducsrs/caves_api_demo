@@ -46,6 +46,10 @@ This can also be combatted by commenting on all of my code to make sure it is un
   * Communication will be essential to this project, especially with my partner Dr. Zigler. Especially with a majority of this project being exploratory I have to be certain that I am not missing out on any of the concepts that Dr. Zigler wants to look into by getting distracted with other possible directions that the project could go into. 
   * To contradict this issue it will also be important to not limit myself on waiting for tasks from Dr. Zigler, but by being proactive in the data analysis process. 
 
+Link to the goals and risk analysis presentation: [Stop the Raves in the Caves.pdf](https://github.com/sewaneedata/caves/files/8958463/Stop.the.Raves.in.the.Caves.pdf)
+
+
+
 ### Client Perspective Report 
 
   It is apparent that no one has specifically synthesized the available conservation data for North American cave species over the past twenty years. While this is the case, the website Nature Serve is periodically kept up to date with information on various species about their topics such as regional status, global status, range extent, and taxonomic data, which I hope to compile into a data set for analyzation. In fact, this is what I aim for this project to succeed in doing; synthesizing and analyzing conservation data for 1200 species or more of cave animals from within the United States and Canada. 
@@ -56,6 +60,7 @@ This can also be combatted by commenting on all of my code to make sure it is un
 
   I am extremely interested in this field and have a strong passion for conserving the biodiversity of cave species and aim for the product of this research to support conservation planning by highlighting species in need of conservation and as well as regions with high numbers of imperiled cave species. 
 
+Link to the client perspective presentation: [Client Perspective .pdf](https://github.com/sewaneedata/caves/files/8958470/Client.Perspective.pdf)
 
 
 
