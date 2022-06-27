@@ -92,8 +92,8 @@ all_status <- Caves %>% group_by(G_status) %>%
 (Caves%>% group_by(G_status) %>% 
     distinct(Species)
   %>% tally)
-#Caves <- Caves %>% 
- # mutate(G_status = ifelse(G_status == 'T1: Critically Imperiled', 'G1: Critically Imperiled', G_status))
+Caves <- Caves %>% 
+  mutate(G_status = ifelse(G_status == 'T1: Critically Imperiled', 'G1: Critically Imperiled', G_status))
 bar1 <- ggplot(data = all_status, aes(x = G_status, y = n, fill = G_status)) +
   geom_col() +
   geom_text(aes(label = n), vjust = -0.25, colour = "black", size = 2.75) +
@@ -222,6 +222,20 @@ scale_fill_manual(values = c( "G1: Critically Imperiled" ='darkred',
 percent_status <- Caves %>% group_by(G_status,Region ) %>% 
   tally %>% 
   arrange(desc(n))
+names(percent_status)[2] <- "state"
+names(percent_status)[3] <- "Number_Species"
+
+test_graph <- plot_geo(percent_status,
+            locationmode = 'USA-states',
+            frame = ~G_status) %>% 
+  add_trace(locations = ~state,
+            z = ~Number_Species,
+            color = ~Number_Species,
+            colorscale = 'Reds') %>% 
+  layout(geo = list(scope = 'usa'))
+
+
+
 
 
 
@@ -233,7 +247,23 @@ percent_status <- Caves %>% group_by(G_status,Region ) %>%
 
 library(usmap)
 
-plot_usmap()
+crit_imperiled <- Caves %>% filter(G_status %in% "G1: Critically Imperiled") %>% 
+  group_by(Region) %>% 
+  tally
+names(crit_imperiled)[1] <- "state"
+names(crit_imperiled)[2] <- "Critically_Imperiled"
+critimper_graph <- plot_geo(crit_imperiled,
+                            locationmode = 'USA-states') %>% 
+  add_trace(locations = ~state,
+            z = ~Critically_Imperiled,
+            color = ~Critically_Imperiled,
+            colorscale = 'Reds',
+            z = "Number of Species") %>% 
+  layout(geo = list(scope = 'usa'),
+         title = "Critically Imperiled Species (United States)") %>% 
+  config(displayModeBar = FALSE)
+
+         
 
 
 
@@ -520,4 +550,47 @@ ggplot(data = Annelida, aes(x = G_status, y = n, fill = G_status)) +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 
 
-#Carter was here
+# Table 1. All cave species by region (state/province) by GRank (total species, all global status ranks)
+
+CaveTable <- Caves %>% group_by(G_status) %>% 
+  mutate(G1 = ifelse(G_status == "G1: Critically Imperiled", 1, 0),
+         G2 = ifelse(G_status == "G2: Imperiled", 1, 0),
+         G3 = ifelse(G_status == "G3: Vulnerable", 1, 0),
+         G4 = ifelse(G_status == "G4: Apparently Secure", 1, 0),
+         G5 = ifelse(G_status == "G5: Secure", 1, 0),
+         GH = ifelse(G_status == "GH: Presumed Extinct", 1, 0),
+         GX = ifelse(G_status == "GX: Presumed Extinct", 1, 0),
+         GNR = ifelse(G_status == "GNR: Unranked", 1, 0),
+         GU = ifelse(G_status == "Unrankable", 1, 0),
+         Total_Species = rep(1, times = n())) 
+CaveTable2 <- CaveTable %>% select(Region, Total_Species, G1, G2, G3, G4, G5, GH, GX, GNR, GU)
+         
+
+CaveTable <- Caves %>% 
+  group_by(Region, G_status) %>% 
+  tally() %>% 
+  pivot_wider( values_from=n, names_from=G_status) %>% 
+  select(-`NA`) %>%
+  ungroup()
+
+ CaveTable <- CaveTable %>% mutate('Total Species' = rowSums( across(!Region), na.rm=TRUE))
+CaveTable <- CaveTable %>% select(Region, `Total Species`, "G1" = "G1: Critically Imperiled", "G2" = "G2: Imperiled", "G3" = "G3: Vulnerable",
+                     "G4" = "G4: Apparently Secure", "G5" = "G5: Secure", "GH" = "GH: Possibly Extinct", "GX" = "GX: Presumed Extinct", 
+                     "GNR" = "GNR: Unranked", "GU" = "GU: Unrankable")
+ncol(Caves)
+nrow(Caves)
+
+
+# Awful Map
+
+BadMap <- Caves %>% filter(G_status %in% "G5: Secure") %>% 
+  group_by(Region) %>% distinct(Species) 
+
+ggplot(data = BadMap, aes(x = Species, y = Region, fill = Species)) +
+  geom_area()
+
+
+
+
+
+
