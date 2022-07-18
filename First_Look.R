@@ -10,12 +10,12 @@ library(ggthemes)
 library(plotly)
 library(ggrepel)
 library(gridExtra)
-
+library(orca)
 small_cave <- read_csv("~/Desktop/Conservation_Status/Cave Species Only - Sheet1.csv")
 
 All_data <- read_csv("~/Desktop/Conservation_Status/Nature Serve All Species  - Sheet1.csv")
 
-Caves <- read_csv("~/Desktop/Conservation_Status/tax_and_regions.csv")
+Caves <- read_csv("~/Desktop/Conservation_Status/1tax_region_range_usesa - 1tax_region_range_usesa.csv")
 names(Caves)[8] <- "G_status"
 names(Caves)[10] <- "R_status"
 Caves$G_status <- factor(Caves$G_status, 
@@ -39,7 +39,8 @@ names(Caves)
 crit_imperiled <- Caves %>% filter(G_status %in% "G1: Critically Imperiled") %>% 
   group_by(Region) %>% 
   tally %>% 
-  arrange(desc(n))
+  arrange(desc(n)) %>% 
+  tail(10)
 
 
 #Number of secure species by region 
@@ -54,7 +55,7 @@ crit_imperiled_top_10 <- Caves %>% filter(G_status %in% "G1: Critically Imperile
   group_by(Region) %>% 
   tally %>% 
   arrange(desc(n)) %>% 
-  head(10)
+  tail(10)
 
 
 #Lets see how all of those look when using Regional Status instead of global 
@@ -92,11 +93,11 @@ all_status <- Caves %>% group_by(G_status) %>%
 (Caves%>% group_by(G_status) %>% 
     distinct(Species)
   %>% tally)
-Caves <- Caves %>% 
+#Caves <- Caves %>% 
   mutate(G_status = ifelse(G_status == 'T1: Critically Imperiled', 'G1: Critically Imperiled', G_status))
 bar1 <- ggplot(data = all_status, aes(x = G_status, y = n, fill = G_status)) +
   geom_col() +
-  geom_text(aes(label = n), vjust = -0.25, colour = "black", size = 2.75) +
+  geom_text(aes(label = n), vjust = -0.20, colour = "black", size = 2.75) +
   scale_fill_manual(values = c( "G1: Critically Imperiled" ='darkred',
                                 "G2: Imperiled" = 'darkorange3',
                                 "G3: Vulnerable" = 'darkgoldenrod2',
@@ -107,10 +108,12 @@ bar1 <- ggplot(data = all_status, aes(x = G_status, y = n, fill = G_status)) +
                                 "GNR: Unranked" = 'darkslategray',
                                 "GU: Unrankable" = 'darkgrey'
   )) +
-  labs(x = 'Global Status', y = 'Number of Species', title = "Species Global Status") +
+  labs(x = 'Global Status', y = 'Number of Species', title = "Cave Species Global Status") +
   theme_clean() +
   theme(legend.position = 'none') +
   theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+ggsave(filename = "Global.png", plot = bar1, bg = "transparent")
+
 ggplotly(bar1)
 plot(bar1)
 #Obviously on this plot Critically imperiled species are the most abundent so let's do a bar plot 
@@ -252,18 +255,34 @@ crit_imperiled <- Caves %>% filter(G_status %in% "G1: Critically Imperiled") %>%
   tally
 names(crit_imperiled)[1] <- "state"
 names(crit_imperiled)[2] <- "Critically_Imperiled"
+
+
+
 critimper_graph <- plot_geo(crit_imperiled,
-                            locationmode = 'USA-states') %>% 
+                            locationmode = 'USA-states',
+                            width = 500, height = 350) %>% 
   add_trace(locations = ~state,
             z = ~Critically_Imperiled,
             color = ~Critically_Imperiled,
             colorscale = 'Reds',
-            z = "Number of Species") %>% 
-  layout(geo = list(scope = 'usa'),
-         title = "Critically Imperiled Species (United States)") %>% 
-  config(displayModeBar = FALSE)
+            colorbar = list(title = "Number of Cave Species"),
+            size = 10) %>% 
+  layout(geo = list(scope = 'usa'))    
 
-         
+
+
+
+ggsave(filename = "Map1.png",  plot = critimper_graph,  bg = "transparent")
+# Let's try to do this map with many more filters
+
+big_map <- Caves %>% filter(G_status %in% c("G1: Critically Imperiled","G5: Secure"), Phylum %in% P) %>% 
+  group_by(Region) %>% 
+  tally
+
+
+
+
+
 
 
 
@@ -292,7 +311,7 @@ All_data2 <- All_data %>%
          pos = pct/2 + lead(csum, 1),
          pos = if_else(is.na(pos), pct/2, pos))
 
-ggplot(All_data, aes(x = "" , y = pct, fill = fct_inorder(G_status))) +
+pie2 <- ggplot(All_data, aes(x = "" , y = pct, fill = fct_inorder(G_status))) +
   geom_col(width = 1, color = 1) +
   coord_polar(theta = "y") +
   scale_fill_manual(values = c('darkred','darkorange3',
@@ -306,8 +325,9 @@ ggplot(All_data, aes(x = "" , y = pct, fill = fct_inorder(G_status))) +
   guides(fill = guide_legend(title = "Global Status")) +
   theme_void()
 
-All_data <- All_data %>% mutate(pct = round((n/37552)*100))
+All_data <- All_data %>% mutate(pct = round((n/37551)*100))
 
+ggsave(file= "pie2.png", plot=pie2, width=8, height=8, bg = "transparent")
 #So now lets do one with cave species 
 
 small_cave2 <- small_cave %>% 
@@ -315,7 +335,7 @@ small_cave2 <- small_cave %>%
          pos = pct/2 + lead(csum, 1),
          pos = if_else(is.na(pos), pct/2, pos))
 
-ggplot(small_cave, aes(x = "" , y = pct, fill = fct_inorder(G_status))) +
+pie1 <- ggplot(small_cave, aes(x = "" , y = pct, fill = fct_inorder(G_status))) +
   geom_col(width = 1, color = 1) +
   coord_polar(theta = "y") +
   scale_fill_manual(values = c('darkred','darkorange3',
@@ -325,13 +345,17 @@ ggplot(small_cave, aes(x = "" , y = pct, fill = fct_inorder(G_status))) +
   geom_label_repel(data = small_cave2,
                    aes(y = pos, label = paste0(pct, "%")),
                    size = 4.5, nudge_x = 1, show.legend = FALSE) +
-  labs(title = "Cave Species in NatureServe (G1-G5, 93%)") +
-  guides(fill = guide_legend(title = "Global Status")) +
-  theme_void()
+  labs(title = "Cave Species in NatureServe (G1-G5, 94%)") +
+  theme_void() +
 
-small_cave <- small_cave %>% mutate(pct = round((n/1090)*100))
+    
+  
+  guides(fill = guide_legend(title = "Global Status")) 
   
 
+small_cave <- small_cave %>% mutate(pct = round((n/1091)*100))
+  
+ggsave(file= "pie2.png", plot=pie2, width=8, height=8, bg = "transparent")
 
 #######################################################################
 
@@ -579,7 +603,7 @@ CaveTable <- CaveTable %>% select(Region, `Total Species`, "G1" = "G1: Criticall
                      "GNR" = "GNR: Unranked", "GU" = "GU: Unrankable")
 ncol(Caves)
 nrow(Caves)
-
+Caves %>% distinct(Species)
 
 # Awful Map
 
@@ -587,9 +611,54 @@ BadMap <- Caves %>% filter(G_status %in% "G5: Secure") %>%
   group_by(Region) %>% distinct(Species) 
 
 ggplot(data = BadMap, aes(x = Species, y = Region, fill = Species)) +
+  
+
   geom_area()
 
+######################################################
 
+# Let's create these lists
+
+Caves %>% filter(Phylum %in% "Mollusca") %>% group_by(Class) %>% tally
+
+Caves %>% filter(Class %in% "Gastropoda") %>% group_by(Order) %>% tally
+
+Caves %>% filter(Order %in% "Alloeocoela") %>% 
+  group_by(Family) %>% tally
+Caves %>% filter(Order %in% "Tricladida") %>% 
+  group_by(Family) %>% tally
+###########
+
+Caves %>% filter(Phylum %in% "Alloeocoela") %>% group_by(Class) %>% tally
+
+Caves %>% filter(Class %in% "Arachnida") %>% group_by(Order) %>% tally
+
+Caves %>% filter(Order %in% "Araneae") %>% 
+  group_by(Family)
+
+#Phlym                        
+#Annelida                       #Platyhelminthes                #Mollusca
+
+#Class                          #Class                          #Class
+#Oligochaeta                      #Turbellaria                    #Gastropoda
+
+#Order                          #Order                          #Order
+
+#Branchiobdellida               # Tricladida
+  #Family                         #Family
+    #Branchiobdellidae              # Dendrocoelidae     
+                                      #Kenkiidae         
+                                      #Planariidae 
+
+#Lumbriculida                   #Alloeocoela
+  #Family                           #Family
+    #Lumbriculidae                    #Prorhynchidae 
+    #Parvidrilidae
+
+g1box <- Caves %>% filter(G_status %in% "G5: Secure") %>% 
+  distinct(Species) %>% tally
+
+Caves %>% group_by(R_status, Region) %>% distinct(Species) %>% tally %>% arrange(desc(n)) 
 
 
 
