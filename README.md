@@ -72,4 +72,49 @@ Recently, reviews have been done on the biodiversity of certain cave species in 
 
 “NatureServe is a nonprofit organization that provides the scientific bases for effective conservation action. NatureServe and its hemisphere-wide network of natural heritage programs are the leading sources of information about rare and endangered species and threatened ecosystems” (NatureServe 2012). NatureServe is a database we have used to gather the data to form our dataset for this project. They provide a wide variety of information on each species, including global and regional status, which are extremely important for gauging the current state of a species. Even with the importance of these ranking systems, NatureServe has discussed possible issues with the system. “It is important to remember, however, that regardless of improvements to the assessment method and use of the rank calculator, resulting calculated ranks are only as good as the quality of information used to assign ratings to the underlying individual status factors”(NatureServe). Of course, it would be impossible to have a completely accurate method for subterranean-rank species, so NatureServe continues to be one of the most, if not the most, valuable resources regarding data on cave species. Their global status ranking system is as follows: G1: Critically imperiled, G2: Imperiled, G3: Vulnerable, G4: Apparently secure, G5: Secure. Along with those five rankings, NatureServe has others including GX, GH, GNR, and GU for species that are presumed extinct, unranked, or unrankable. 
 
+### Data Dictionary 
+
+#### Caves Dataset 
+* 10 Columns, 1628 Rows 
+* Species
+  * This column contains every species that was gathered from the API on NatureServe (Original list from Niemiller 2019)
+* Common Name 
+  * This column gives the common name for each species that was pulled from NatureServe 
+* Kingdom 
+  * Taxonomic description
+* Phylum
+  * Taxonomic description
+* Class
+  * Taxonomic description
+* Order
+  * Taxonomic description
+* Family
+  * Taxonomic description
+* Global Status
+  * This column contains a global status for each species varying from G1: Critically Imperiled all the way to GU: Unrankable 
+* Region
+  * This column gives the region in which the species is located 
+* Region Status 
+  * This is a similar criterion to Global Status, but only applies to the region/state so the rankings may vary from the global status
+
+The purpose of this dataset is to be used for analysis to see trends in which region/species/family is the most at risk or secure. After finding these trends, the dataset should be used to generate graphs/tables that can be inserted into an academic paper that will be written on the topic that encompasses all of the data. 
+
+### Products Required 
+
+The future end product we hope to accomplish from this project is an academic paper that outlines trends in the data gathered from NatureServe on over 1100 different cave species. These species are a mixture of different endangerment levels, and we hope to be able to highlight regions and species that are most at risk through this process. It is extremely important to be thorough in our data collection and analysis as no one has analyzed the available conservation data on endangered cave species in 20 years. An academic paper will give a voice to the species that are especially vulnerable and in need of attention. Along with writing a paper, a dashboard will be part of the end product. Even though the use of the final dashboard is still unknown, many directions can be taken when the data is formatted in an easily understandable and accessible format to the target audience. Whether it be researchers, professors, the general public, or students, this dashboard will highlight the importance of the state many cave species are in across the United States and Canada.
+
+
+It is already known that this data is available on the internet through NatureServe explorer, but what we hope to provide by analyzing it will be unique and valuable in the future for conservationists. NatureServe allows the user to search for species by species or even in groups but does not provide a collection of data that relates all of the species' endangerments and locations to each other. The dashboard that we are creating will plan to do exactly that. With the visualization of all global statuses of the available cave species, we can successfully outline the states/regions that have the greatest population of vulnerable species. Along with using a map to visualize what vulnerabilities look like on a large scale, other tabs will focus solely on the state/region level underlying the different types of species at risk. 
+
+
+The choice of a dashboard was simple in that it is all-encompassing in ways where we can include statistics on the data that we have analyzed, as well as visualizations to create a perspective of how many states are truly struggling to protect their cave species. Another important reason for choosing a dashboard would be the interactive qualities that it can have. The dashboard can potentially be used as a search function that could highlight a specific Phylum or Order on the map, showing all of the specific areas where that subset is the most vulnerable.
+
+
+### Final Products 
+
+#### Poster 
+
+Click the link to view our final product poster! [_Caves- DataFest Poster 24x36 design .pdf](https://github.com/sewaneedata/caves/files/9162401/_Caves-.DataFest.Poster.24x36.design.pdf)
+
+
 
