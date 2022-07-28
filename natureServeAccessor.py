@@ -2,7 +2,6 @@ import requests
 # used to make REST API calls
 import json
 # used to save data to file
-import threeFields
 
 with open('Troblobionts updated.csv', 'r') as file:
     # Open the csv in [r]ead mode
@@ -17,7 +16,7 @@ print(names[0:10])
 # Just to check that it worked
 
 # Now we need a JSON object to make up the API request body
-# All of these parameters are listed in the documentation under "The Search Criteria Object"
+# All of these parameters are listed in the NatureServe documentation under "The Search Criteria Object"
 params = {'criteriaType': 'combined',
           # Docs say that 'species' should be valid here, but it's not
           'textCriteria': [{
@@ -32,9 +31,10 @@ params = {'criteriaType': 'combined',
            }]
           }
 
-with open('june.json', 'w') as file:
-    file.write('[')
+with open('troglobionts.json', 'w') as file:
     # Open the data file in [w]rite mode; this will create troglobionts.json if it doesn't exist already
+    file.write('[')
+    # Format as a JSON array; opening and closing brackets, commas inbetween
     for name in names:
         # Looping through the list we created from the .csv
         params['textCriteria'][0]['searchToken'] = name
@@ -53,5 +53,4 @@ with open('june.json', 'w') as file:
         # Save the data as text in the file we opened on line 34
         file.write(',')
     file.write(']')
-
-# threeFields.species_common_status('extras.json')
+    
