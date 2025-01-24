@@ -1,29 +1,17 @@
 import requests
-# used to make REST API calls
 import json
-# used to save data to file
 
-with open('Troblobionts updated.csv', 'r') as file:
-    # Open the csv in [r]ead mode
-    names = [name.strip('\n') for name in file.readlines()[1:]]
-    # file.readlines() returns a list with two problems:
-    # 1) The first element is just the string "Species"
-    # We solve this by slicing [1:] to get every element from index 1 on
-    # 2) Each element ends in a newline character \n
-    # We solve this by calling the strip() method of each element in a list comprehension
+NAMES_FILE='troglobionts.csv'
+OUTPUT_FILE='troglobionts_search_results.json'
 
-print(names[0:10])
-# Just to check that it worked
+ENDPOINT='https://explorer.natureserve.org/api/data/search'
+# NatureServe Explorer Search API; this connects to a public database of species conservation data
+# https://explorer.natureserve.org/api-docs/#_the_search_criteria_object
 
-# Now we need a JSON object to make up the API request body
-# All of these parameters are listed in the NatureServe documentation under "The Search Criteria Object"
 params = {'criteriaType': 'combined',
-          # Docs say that 'species' should be valid here, but it's not
+          # Documentaion says that 'species' should be valid here, but it's not
           'textCriteria': [{
-              # Note that 'textCriteria' needs an array of criteria objects
-              # In this case there's only one set of criteria at a time, hence [{}]: an array of one object
               'paramType': 'textSearch',
-              # 'quickSearch' would also work
               'searchToken': '',
               # To be filled in when we loop through the names
               'matchAgainst': 'scientificName',
@@ -31,26 +19,21 @@ params = {'criteriaType': 'combined',
            }]
           }
 
-with open('troglobionts.json', 'w') as file:
-    # Open the data file in [w]rite mode; this will create troglobionts.json if it doesn't exist already
-    file.write('[')
-    # Format as a JSON array; opening and closing brackets, commas inbetween
-    for name in names:
-        # Looping through the list we created from the .csv
-        params['textCriteria'][0]['searchToken'] = name
-        # params is our JSON object
-        # params['textCriteria'] is the array with one object
-        # params['textCriteria'][0] is the object in that array
-        # params['textCriteria'][0]['searchToken'] is the token string that was empty to start with
-        # This line will change the token on every loop
+with open(NAMES_FILE, 'r') as file:
+    # Read the provided list of species names
+    names = [name.strip('\n') for name in file.readlines()[1:]]
 
-        data = requests.post(url=f'https://explorer.natureserve.org/api/data/search', json=params)
-        # Now we've finally made an API call to the endpoint URL listed in the docs
-        # and saved the response in a new variable called data
+with open(OUTPUT_FILE, 'w') as file:
+    # This will create a file if it doesn't exist already
+    file.write('[') 
+    for name in names:
+        params['textCriteria'][0]['searchToken'] = name
+
+        data = requests.post(url=ENDPOINT, json=params)
         data.raise_for_status()
-        # Check for errors
-        json.dump(data.json(), file, indent=2)
-        # Save the data as text in the file we opened on line 34
+        
+	json.dump(data.json(), file, indent=2)
+
         file.write(',')
     file.write(']')
-    
+   # json.dump() can also write an array to file, so it would be valid to save all the search results in a list and then dump. I chose to add brackets and commas with file.write() instead because, when something went wrong during the loop, I could restart from the middle without losing the earlier successful searches. 
