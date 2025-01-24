@@ -36,4 +36,6 @@ with open(OUTPUT_FILE, 'w') as file:
 
         file.write(',')
     file.write(']')
-   # json.dump() can also write an array to file, so it would be valid to save all the search results in a list and then dump. I chose to add brackets and commas with file.write() instead because, when something went wrong during the loop, I could restart from the middle without losing the earlier successful searches. 
+# json.dump() can also write an array to file, so it would be valid to save all the search results in a list.
+# I chose to add brackets and commas with file.write() instead because, when something went wrong during the
+# loop, I could restart from the middle without losing successful searches. 
